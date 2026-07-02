@@ -1,7 +1,8 @@
 import { embed } from "ai";
-import { google } from "@ai-sdk/google";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { withFallback } from "./gemini/withFallback";
 
 const EMBEDDING_MODEL = "gemini-embedding-001";
 const PERSONAS_DIR = path.join(process.cwd(), "lib", "personas");
@@ -54,11 +55,14 @@ function loadEmbeddings(personaId: string): EmbeddingsFile {
 }
 
 export async function embedQuery(query: string): Promise<number[]> {
-  const { embedding } = await embed({
-    model: google.embedding(EMBEDDING_MODEL),
-    value: query,
+  return withFallback(async (key) => {
+    const google = createGoogleGenerativeAI({ apiKey: key.value });
+    const { embedding } = await embed({
+      model: google.embedding(EMBEDDING_MODEL),
+      value: query,
+    });
+    return embedding;
   });
-  return embedding;
 }
 
 export function cosineSimilarity(a: number[], b: number[]): number {

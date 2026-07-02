@@ -8,11 +8,12 @@
 import { config } from "dotenv";
 import path from "node:path";
 
-config({ path: path.join(__dirname, "..", ".env.local") });
+config({ path: path.join(__dirname, "..", ".env.development") });
 
 import { embedMany } from "ai";
-import { google } from "@ai-sdk/google";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { readFileSync, writeFileSync } from "node:fs";
+import { withFallback } from "../lib/gemini/withFallback";
 
 const EMBEDDING_MODEL = "gemini-embedding-001";
 const PERSONAS_DIR = path.join(__dirname, "..", "lib", "personas");
@@ -35,9 +36,12 @@ async function embedPersona(id: string) {
 
   console.log(`Embedding ${excerpts.length} excerpts for "${id}"...`);
 
-  const { embeddings } = await embedMany({
-    model: google.embedding(EMBEDDING_MODEL),
-    values: excerpts.map((e) => e.text),
+  const { embeddings } = await withFallback(async (key) => {
+    const google = createGoogleGenerativeAI({ apiKey: key.value });
+    return embedMany({
+      model: google.embedding(EMBEDDING_MODEL),
+      values: excerpts.map((e) => e.text),
+    });
   });
 
   const output = {
