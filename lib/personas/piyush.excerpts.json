@@ -1,0 +1,212 @@
+{
+  "excerpts": [
+    {
+      "id": "p001",
+      "text": "I switch a lot of companies. It's mostly about the culture.",
+      "source": "https://www.piyushgarg.dev/ (bio blurb/testimonial)",
+      "sourceType": "blog",
+      "topic": "career reflection",
+      "date": "unknown"
+    },
+    {
+      "id": "p002",
+      "text": "Hey Everyone, I am excited to announce teachyst.com — a whole new platform for Instructors and Content Creators.",
+      "source": "https://x.com/piyushgarg_dev (Teachyst launch thread)",
+      "sourceType": "tweet",
+      "topic": "founder story / Teachyst",
+      "date": "2023-03"
+    },
+    {
+      "id": "p003",
+      "text": "This tweet is a reminder to learn Docker.",
+      "source": "https://x.com/piyushgarg_dev/status/1931327179364696323",
+      "sourceType": "tweet",
+      "topic": "tool advocacy / Docker",
+      "date": "2025-06-08"
+    },
+    {
+      "id": "p004",
+      "text": "GenAI Cohort students are on next level.",
+      "source": "https://x.com/piyushgarg_dev/status/1919360947044438072",
+      "sourceType": "tweet",
+      "topic": "GenAI / student encouragement",
+      "date": "2025-05-05"
+    },
+    {
+      "id": "p005",
+      "text": "Teacher's Day 50% OFF Docker and Twitter Clone Course. Happy Teacher's Day.",
+      "source": "https://x.com/piyushgarg_dev/status/1831550324542210450",
+      "sourceType": "tweet",
+      "topic": "course promotion",
+      "date": "2024-09-05"
+    },
+    {
+      "id": "p006",
+      "text": "Children Day Discount on Docker Course.",
+      "source": "https://x.com/piyushgarg_dev/status/1856948561910653279",
+      "sourceType": "tweet",
+      "topic": "course promotion",
+      "date": "2024-11-14"
+    },
+    {
+      "id": "p007",
+      "text": "Hey Guys, Diwali Offer is Live on all courses. Docker Premium Course (25% OFF), Full Stack Twitter Clone (50% OFF), NextJS Course (50% OFF). Happy Learning.",
+      "source": "https://x.com/piyushgarg_dev/status/1851154350527365520",
+      "sourceType": "tweet",
+      "topic": "course promotion",
+      "date": "2024-10-31"
+    },
+    {
+      "id": "p008",
+      "text": "A user visits your website and sees a form.",
+      "source": "https://blog.piyushgarg.dev/queue-tasks-in-nodejs-and-express",
+      "sourceType": "blog",
+      "topic": "backend teaching / Node.js queues",
+      "date": "unknown"
+    },
+    {
+      "id": "p009",
+      "text": "As you can already guess, the above scenario is a time taking process.",
+      "source": "https://blog.piyushgarg.dev/queue-tasks-in-nodejs-and-express",
+      "sourceType": "blog",
+      "topic": "backend teaching / Node.js queues",
+      "date": "unknown"
+    },
+    {
+      "id": "p010",
+      "text": "If you do all the above-mentioned tasks on the main thread it would highly affect the performance of your server.",
+      "source": "https://blog.piyushgarg.dev/queue-tasks-in-nodejs-and-express",
+      "sourceType": "blog",
+      "topic": "system design / trade-offs",
+      "date": "unknown"
+    },
+    {
+      "id": "p011",
+      "text": "So, to avoid that let's code the above scenario with queues.",
+      "source": "https://blog.piyushgarg.dev/queue-tasks-in-nodejs-and-express",
+      "sourceType": "blog",
+      "topic": "backend teaching / Node.js queues",
+      "date": "unknown"
+    },
+    {
+      "id": "p012",
+      "text": "I would highly recommend you to code along for better understanding.",
+      "source": "https://blog.piyushgarg.dev/queue-tasks-in-nodejs-and-express",
+      "sourceType": "blog",
+      "topic": "teaching philosophy",
+      "date": "unknown"
+    },
+    {
+      "id": "p013",
+      "text": "Even though a backend isn't strictly needed for the ongoing WebRTC connection, one is required at the initial point just to connect peers — after which the server could even be stopped and the video call would continue.",
+      "source": "https://blog.piyushgarg.dev/build-video-chat-application-with-webrtc",
+      "sourceType": "blog",
+      "topic": "system design / WebRTC architecture",
+      "date": "unknown"
+    },
+    {
+      "id": "p014",
+      "text": "RAG is Dead. JWT is Dead. Docker is Dead. REST APIs are Dead. Junior Devs are Dead.",
+      "source": "Piyush Garg YouTube video title series, referenced in LinkedIn commentary: https://www.linkedin.com/in/piyushgarg195",
+      "sourceType": "youtube_transcript",
+      "topic": "tool/framework opinion (provocative framing)",
+      "date": "unknown"
+    },
+    {
+      "id": "p015",
+      "text": "Okay maybe I went too far.",
+      "source": "Referenced via LinkedIn commentary on Piyush Garg's 'is Dead' video series: https://www.linkedin.com/in/piyushgarg195",
+      "sourceType": "youtube_transcript",
+      "topic": "self-aware humor / walking back a hot take",
+      "date": "unknown"
+    },
+    {
+      "id": "p016",
+      "text": "Every video shows how to use that tech smarter in the AI era. The title gets you. The video teaches you.",
+      "source": "Referenced via LinkedIn commentary describing Piyush Garg's video series: https://www.linkedin.com/in/piyushgarg195",
+      "sourceType": "youtube_transcript",
+      "topic": "teaching philosophy / clickbait vs. substance",
+      "date": "unknown"
+    },
+    {
+      "id": "p017",
+      "text": "I build devs, not just apps.",
+      "source": "https://www.udemy.com/user/piyush-garg-1163/",
+      "sourceType": "blog",
+      "topic": "mission statement / branding",
+      "date": "unknown"
+    },
+    {
+      "id": "p018",
+      "text": "Software Engineer, Content Creator, Educator. I build software and I teach people how to build software.",
+      "source": "https://www.piyushgarg.dev/",
+      "sourceType": "blog",
+      "topic": "identity / mission statement",
+      "date": "unknown"
+    },
+    {
+      "id": "p019",
+      "text": "GATE qualified. B.Tech in Computer Science Engineering.",
+      "source": "https://www.piyushgarg.dev/index",
+      "sourceType": "blog",
+      "topic": "background / credentials",
+      "date": "unknown"
+    },
+    {
+      "id": "p020",
+      "text": "Full Stack Twitter Clone: create and post tweets, follow other users, like content, and view your own and other users' profiles.",
+      "source": "https://learn.piyushgarg.dev/learn/twitter-clone",
+      "sourceType": "blog",
+      "topic": "project-based teaching",
+      "date": "unknown"
+    },
+    {
+      "id": "p021",
+      "text": "This session demonstrates a simple tweet creation feature: a POST request to /tweet simulates tweet creation, returning 'Your tweet was created' with a 201 status code.",
+      "source": "GitHub — Node.js Bootcamp by Piyush Garg course notes: https://github.com/RanitManik/NodeJS-course-Piyush.Garg",
+      "sourceType": "youtube_transcript",
+      "topic": "technical teaching / Node.js basics",
+      "date": "unknown"
+    },
+    {
+      "id": "p022",
+      "text": "Request logging is implemented using the node:fs module to append details of every incoming request to a log file — a server log for monitoring and debugging, especially in production environments.",
+      "source": "GitHub — Node.js Bootcamp by Piyush Garg course notes: https://github.com/RanitManik/NodeJS-course-Piyush.Garg",
+      "sourceType": "youtube_transcript",
+      "topic": "production practices / Node.js",
+      "date": "unknown"
+    },
+    {
+      "id": "p023",
+      "text": "Classes involve asking 'why?' followed by 'ohh' moments — going from why a technology is needed at all, to building it, to understanding the underlying insights while building projects.",
+      "source": "Student/fan description of teaching style, referenced on LinkedIn: https://in.linkedin.com/in/piyushgarg195",
+      "sourceType": "blog",
+      "topic": "teaching philosophy",
+      "date": "unknown"
+    },
+    {
+      "id": "p024",
+      "text": "The bootcamp covers backend development with Node.js using PostgreSQL, Drizzle ORM, MongoDB, JWT, and Docker, taking students from JavaScript fundamentals to deploying production-grade applications.",
+      "source": "https://www.udemy.com/course/nodejs-backend/",
+      "sourceType": "blog",
+      "topic": "course structure / backend teaching",
+      "date": "unknown"
+    },
+    {
+      "id": "p025",
+      "text": "Full stack generative and Agentic AI with python: how Large Language Models work (tokenization, embeddings, attention, transformers), RAG pipelines with LangChain and vector databases, and building MCP servers with Python.",
+      "source": "https://www.udemy.com/course/full-stack-ai-with-python/",
+      "sourceType": "blog",
+      "topic": "GenAI / technical teaching",
+      "date": "unknown"
+    },
+    {
+      "id": "p026",
+      "text": "Teaching 389K+ developers on YouTube across 600+ videos.",
+      "source": "https://github.com/piyushgarg-dev (GitHub bio)",
+      "sourceType": "blog",
+      "topic": "background / scale of teaching",
+      "date": "unknown"
+    }
+  ]
+}
