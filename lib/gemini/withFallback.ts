@@ -1,4 +1,4 @@
-import { APICallError } from "ai";
+import { APICallError, RetryError } from "ai";
 import { getUsableKeys, markKeyExhausted, type GeminiKey } from "./keyManager";
 
 export class AllKeysExhaustedError extends Error {
@@ -8,15 +8,23 @@ export class AllKeysExhaustedError extends Error {
   }
 }
 
-function isRetryableError(err: unknown): boolean {
-  if (APICallError.isInstance(err)) {
-    if (err.statusCode === 429) return true;
-    if (err.isRetryable) return true;
-    // Google sometimes returns 503 for transient overload — treat as retryable too.
-    if (err.statusCode === 503) return true;
-    return false;
-  }
+function isRetryableApiCallError(err: unknown): boolean {
+  if (!APICallError.isInstance(err)) return false;
+  if (err.statusCode === 429) return true;
+  if (err.isRetryable) return true;
+  // Google sometimes returns 503 for transient overload — treat as retryable too.
+  if (err.statusCode === 503) return true;
   return false;
+}
+
+function isRetryableError(err: unknown): boolean {
+  // streamText retries internally before we ever see a raw APICallError; once
+  // its own retries are exhausted it throws a RetryError wrapping the last
+  // (and all) underlying attempts, so check those instead of the wrapper.
+  if (RetryError.isInstance(err)) {
+    return isRetryableApiCallError(err.lastError);
+  }
+  return isRetryableApiCallError(err);
 }
 
 /**

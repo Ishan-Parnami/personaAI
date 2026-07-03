@@ -105,10 +105,17 @@ export async function POST(req: Request) {
         messages: context.verbatimMessages,
       });
       const streamReader = streamResult.fullStream.getReader();
-      const { value: part } = await streamReader.read();
-      if (part?.type === "error") {
-        throw part.error;
-      }
+      // Skip past lifecycle parts (e.g. "start") that precede the first
+      // real content or error — Gemini's stream always emits "start" first,
+      // so peeking only the very first part would miss a 429/quota error
+      // that only surfaces once the underlying request actually resolves.
+      let part: Awaited<ReturnType<typeof streamReader.read>>["value"];
+      do {
+        ({ value: part } = await streamReader.read());
+        if (part?.type === "error") {
+          throw part.error;
+        }
+      } while (part?.type === "start");
       return { reader: streamReader, firstPart: part };
     });
 

@@ -1,1 +1,71 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary-50: #faf5ff;
+  --color-primary-100: #f3e8ff;
+  --color-primary-200: #e9d5ff;
+  --color-primary-300: #d8b4fe;
+  --color-primary-400: #c084fc;
+  --color-primary-500: #a855f7;
+  --color-primary-600: #9333ea;
+  --color-primary-700: #7e22ce;
+  --color-primary-800: #6b21a8;
+  --color-primary-900: #581c87;
+  --color-primary-950: #3b0764;
+}
+
+:root {
+  --bg: #faf9fc;
+  --bg-elevated: #ffffff;
+  --fg: #1c1522;
+  --fg-muted: #6b6474;
+  --border: #e6e1eb;
+  --accent: var(--color-primary-600);
+  --accent-fg: #ffffff;
+}
+
+:root.dark {
+  --bg: #0e0a14;
+  --bg-elevated: #171122;
+  --fg: #f3effa;
+  --fg-muted: #a89db8;
+  --border: #2a2136;
+  --accent: var(--color-primary-400);
+  --accent-fg: #1c1522;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.dark) {
+    --bg: #0e0a14;
+    --bg-elevated: #171122;
+    --fg: #f3effa;
+    --fg-muted: #a89db8;
+    --border: #2a2136;
+    --accent: var(--color-primary-400);
+    --accent-fg: #1c1522;
+  }
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Glassmorphism helper used by the landing page and floating panels. */
+.glass {
+  background: color-mix(in srgb, var(--bg-elevated) 60%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+/* Visible keyboard focus ring, consistent across interactive elements. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
