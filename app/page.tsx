@@ -14,12 +14,12 @@ export default function Home() {
     >
       {/* Abstract purple gradient blobs — pure CSS, no image assets. */}
       <div
-        className="pointer-events-none absolute -left-40 -top-40 h-128 w-[32rem] rounded-full opacity-90 blur-3xl dark:opacity-40 dark:h-96 dark:w-96"
+        className="pointer-events-none absolute -left-40 -top-40 h-128 w-lg rounded-full opacity-90 blur-3xl dark:opacity-40 dark:h-96 dark:w-96"
         style={{ background: "radial-gradient(circle, var(--color-primary-300), transparent 70%)" }}
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -right-32 top-1/3 h-112 w-[28rem] rounded-full opacity-80 blur-3xl dark:opacity-30 dark:h-80 dark:w-80"
+        className="pointer-events-none absolute -right-32 top-1/3 h-112 w-md rounded-full opacity-80 blur-3xl dark:opacity-30 dark:h-80 dark:w-80"
         style={{ background: "radial-gradient(circle, var(--color-primary-500), transparent 70%)" }}
         aria-hidden="true"
       />
