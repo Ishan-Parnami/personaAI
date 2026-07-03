@@ -8,21 +8,24 @@ const HeroOrb = dynamic(() => import("@/components/HeroOrb"), { ssr: false });
 
 export default function Home() {
   return (
-    <div className="relative flex min-h-dvh flex-col items-center overflow-hidden px-4 py-10 sm:py-16">
+    <div
+      className="relative flex min-h-dvh flex-col items-center overflow-hidden px-4 py-10 sm:py-16"
+      style={{ background: "radial-gradient(circle at 50% 0%, var(--hero-wash), var(--bg) 60%)" }}
+    >
       {/* Abstract purple gradient blobs — pure CSS, no image assets. */}
       <div
-        className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full opacity-40 blur-3xl"
+        className="pointer-events-none absolute -left-40 -top-40 h-128 w-[32rem] rounded-full opacity-90 blur-3xl dark:opacity-40 dark:h-96 dark:w-96"
+        style={{ background: "radial-gradient(circle, var(--color-primary-300), transparent 70%)" }}
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -right-32 top-1/3 h-112 w-[28rem] rounded-full opacity-80 blur-3xl dark:opacity-30 dark:h-80 dark:w-80"
         style={{ background: "radial-gradient(circle, var(--color-primary-500), transparent 70%)" }}
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -right-24 top-1/3 h-80 w-80 rounded-full opacity-30 blur-3xl"
-        style={{ background: "radial-gradient(circle, var(--color-primary-700), transparent 70%)" }}
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -bottom-24 left-1/2 h-72 w-xl -translate-x-1/2 rounded-full opacity-20 blur-3xl"
-        style={{ background: "radial-gradient(ellipse, var(--color-primary-400), transparent 70%)" }}
+        className="pointer-events-none absolute -bottom-32 left-1/2 h-112 w-3xl -translate-x-1/2 rounded-full opacity-70 blur-3xl dark:opacity-20 dark:h-72 dark:w-xl"
+        style={{ background: "radial-gradient(ellipse, var(--color-primary-200), transparent 70%)" }}
         aria-hidden="true"
       />
 

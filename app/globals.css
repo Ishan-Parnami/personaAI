@@ -22,6 +22,9 @@
   --border: #e6e1eb;
   --accent: var(--color-primary-600);
   --accent-fg: #ffffff;
+  --user-bubble: #eceaf1;
+  --user-bubble-fg: #1c1522;
+  --hero-wash: var(--color-primary-100);
 }
 
 :root.dark {
@@ -32,6 +35,9 @@
   --border: #2a2136;
   --accent: var(--color-primary-400);
   --accent-fg: #1c1522;
+  --user-bubble: #2e2a38;
+  --user-bubble-fg: #f3effa;
+  --hero-wash: transparent;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -43,6 +49,9 @@
     --border: #2a2136;
     --accent: var(--color-primary-400);
     --accent-fg: #1c1522;
+    --user-bubble: #2e2a38;
+    --hero-wash: transparent;
+    --user-bubble-fg: #f3effa;
   }
 }
 
@@ -62,6 +71,71 @@ body {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+/* Markdown content inside message bubbles: tighter spacing than browser
+   defaults so lists/paragraphs read as part of a chat bubble, not a document. */
+.markdown-body :where(p, ul, ol) {
+  margin: 0;
+}
+.markdown-body :where(p, ul, ol) + :where(p, ul, ol) {
+  margin-top: 0.6em;
+}
+.markdown-body ul {
+  list-style-type: disc;
+  padding-left: 1.25em;
+}
+.markdown-body ol {
+  list-style-type: decimal;
+  padding-left: 1.25em;
+}
+.markdown-body li::marker {
+  color: var(--fg-muted);
+}
+.markdown-body li + li {
+  margin-top: 0.25em;
+}
+.markdown-body li > :where(ul, ol) {
+  margin-top: 0.25em;
+}
+.markdown-body strong {
+  font-weight: 600;
+}
+.markdown-body code {
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+  border-radius: 0.25em;
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
+}
+.markdown-body a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Circular reveal for the dark-mode toggle: animates the ::view-transition-new
+   root clipping outward from the toggle button's screen position. Vars are set
+   inline on :root by ThemeToggle just before the transition starts. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+.theme-transitioning::view-transition-new(root) {
+  animation: theme-reveal 500ms ease-in-out;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%));
+  }
+  to {
+    clip-path: circle(150% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%));
+  }
 }
 
 /* Visible keyboard focus ring, consistent across interactive elements. */

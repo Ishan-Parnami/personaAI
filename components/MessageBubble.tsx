@@ -1,3 +1,5 @@
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { StoredMessage } from "@/lib/useChatHistory";
 import { PERSONAS } from "@/lib/personaConfig";
 
@@ -6,6 +8,14 @@ const ERROR_STYLES: Record<NonNullable<StoredMessage["error"]>, string> = {
   exhausted: "border-orange-300/60 bg-orange-50 text-orange-900 dark:border-orange-400/30 dark:bg-orange-950/40 dark:text-orange-200",
   generic: "border-red-300/60 bg-red-50 text-red-900 dark:border-red-400/30 dark:bg-red-950/40 dark:text-red-200",
 };
+
+function MessageMarkdown({ content }: { content: string }) {
+  return (
+    <div className="markdown-body">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+    </div>
+  );
+}
 
 export default function MessageBubble({ message }: { message: StoredMessage }) {
   const isUser = message.role === "user";
@@ -35,13 +45,22 @@ export default function MessageBubble({ message }: { message: StoredMessage }) {
         </div>
       )}
       <div
-        className={`max-w-[85%] whitespace-pre-wrap wrap-break-word rounded-2xl px-4 py-2.5 text-sm leading-relaxed sm:max-w-[70%] ${
-          isUser
-            ? "rounded-br-sm bg-primary-600 text-white dark:bg-primary-500 dark:text-black"
-            : "glass rounded-bl-sm"
+        className={`max-w-[85%] wrap-break-word rounded-2xl px-4 py-2.5 text-sm leading-relaxed sm:max-w-[70%] ${
+          isUser ? "rounded-br-sm" : "rounded-bl-sm border-l-2"
         }`}
+        style={
+          isUser
+            ? { backgroundColor: "var(--user-bubble)", color: "var(--user-bubble-fg)" }
+            : {
+                backgroundColor: "var(--bg-elevated)",
+                borderColor: persona.accent,
+                border: "1px solid var(--border)",
+                borderLeftWidth: "3px",
+                borderLeftColor: persona.accent,
+              }
+        }
       >
-        {message.content}
+        <MessageMarkdown content={message.content} />
         {message.content.length === 0 && (
           <span className="sr-only">Waiting for response…</span>
         )}

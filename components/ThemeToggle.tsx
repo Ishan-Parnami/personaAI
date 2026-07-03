@@ -1,10 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { applyTheme, getStoredTheme, getSystemTheme, type Theme } from "@/lib/theme";
+
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (callback: () => void) => { finished: Promise<void> };
+};
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<Theme | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setTheme(getStoredTheme() ?? getSystemTheme());
@@ -12,12 +18,36 @@ export default function ThemeToggle() {
 
   function toggle() {
     const next: Theme = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    applyTheme(next);
+    const doc = document as ViewTransitionDocument;
+    const button = buttonRef.current;
+
+    if (!doc.startViewTransition || !button) {
+      setTheme(next);
+      applyTheme(next);
+      return;
+    }
+
+    const rect = button.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    document.documentElement.style.setProperty("--theme-toggle-x", `${x}px`);
+    document.documentElement.style.setProperty("--theme-toggle-y", `${y}px`);
+    document.documentElement.classList.add("theme-transitioning");
+
+    const transition = doc.startViewTransition(() => {
+      flushSync(() => {
+        setTheme(next);
+        applyTheme(next);
+      });
+    });
+    void transition.finished.finally(() => {
+      document.documentElement.classList.remove("theme-transitioning");
+    });
   }
 
   return (
     <button
+      ref={buttonRef}
       type="button"
       onClick={toggle}
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
