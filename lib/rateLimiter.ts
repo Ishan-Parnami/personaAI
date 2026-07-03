@@ -1,10 +1,36 @@
 import { randomUUID } from "node:crypto";
 
-const MAX_PER_MINUTE = 10;
-const MAX_PER_DAY = 50;
+const DEFAULT_MAX_PER_MINUTE = 5;
+const DEFAULT_MAX_PER_DAY = 50;
 const MINUTE_MS = 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const SESSION_COOKIE_NAME = "persona_session_id";
+
+function getMaxPerMinute(): number {
+  const raw = process.env.RATE_LIMIT_PER_MINUTE;
+  if (!raw) return DEFAULT_MAX_PER_MINUTE;
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    console.warn(
+      `[rateLimiter] Invalid RATE_LIMIT_PER_MINUTE="${raw}" — falling back to default ${DEFAULT_MAX_PER_MINUTE}.`
+    );
+    return DEFAULT_MAX_PER_MINUTE;
+  }
+  return parsed;
+}
+
+function getMaxPerDay(): number {
+  const raw = process.env.RATE_LIMIT_PER_DAY;
+  if (!raw) return DEFAULT_MAX_PER_DAY;
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    console.warn(
+      `[rateLimiter] Invalid RATE_LIMIT_PER_DAY="${raw}" — falling back to default ${DEFAULT_MAX_PER_DAY}.`
+    );
+    return DEFAULT_MAX_PER_DAY;
+  }
+  return parsed;
+}
 
 // In-memory sliding-window store: Map<`${ip}:${sessionId}`, timestamps of requests>.
 // Each entry is an array of request timestamps (ms); on each check we drop
@@ -51,7 +77,7 @@ export function checkRateLimit(req: Request): RateLimitResult {
   const timestamps = (requestLog.get(key) ?? []).filter((t) => now - t < DAY_MS);
 
   const requestsInLastMinute = timestamps.filter((t) => now - t < MINUTE_MS);
-  if (requestsInLastMinute.length >= MAX_PER_MINUTE) {
+  if (requestsInLastMinute.length >= getMaxPerMinute()) {
     const oldestInWindow = Math.min(...requestsInLastMinute);
     const retryAfterSeconds = Math.ceil((MINUTE_MS - (now - oldestInWindow)) / 1000);
     return {
@@ -62,7 +88,7 @@ export function checkRateLimit(req: Request): RateLimitResult {
     };
   }
 
-  if (timestamps.length >= MAX_PER_DAY) {
+  if (timestamps.length >= getMaxPerDay()) {
     const oldestInWindow = Math.min(...timestamps);
     const retryAfterSeconds = Math.ceil((DAY_MS - (now - oldestInWindow)) / 1000);
     return {
