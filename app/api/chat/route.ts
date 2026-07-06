@@ -2,24 +2,14 @@ import { streamText } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { retrieveExcerpts } from "@/lib/retrieval";
 import { buildSystemPrompt } from "@/lib/promptBuilder";
-import { manageContext, type ChatMessage } from "@/lib/contextManager";
+import { manageContext } from "@/lib/contextManager";
 import { withFallback, AllKeysExhaustedError } from "@/lib/gemini/withFallback";
 import { checkRateLimit } from "@/lib/rateLimiter";
+import { validateChatRequest } from "@/lib/guardrails/schema";
+import { logGuardrailEvent, truncateForLog, type GuardrailOutcome } from "@/lib/guardrails/logger";
+import { checkInputSafety } from "@/lib/guardrails/inputGate";
 
 const CHAT_MODEL = "gemini-2.5-flash";
-const VALID_PERSONAS = ["hitesh", "piyush"] as const;
-type PersonaId = (typeof VALID_PERSONAS)[number];
-
-type ChatRequestBody = {
-  persona?: string;
-  messages?: ChatMessage[];
-  /** Running memory summary carried over from a previous response, if any. */
-  runningMemory?: string;
-};
-
-function isValidPersona(value: unknown): value is PersonaId {
-  return typeof value === "string" && (VALID_PERSONAS as readonly string[]).includes(value);
-}
 
 function errorResponse(message: string, status: number, headers?: HeadersInit) {
   return Response.json({ error: message }, { status, headers });
@@ -40,43 +30,91 @@ export async function POST(req: Request) {
 
   const rateLimit = checkRateLimit(req);
   if (!rateLimit.allowed) {
+    await logGuardrailEvent({
+      timestamp: new Date().toISOString(),
+      sessionId: rateLimit.sessionId,
+      persona: null,
+      messageLength: 0,
+      messagePreview: "",
+      dangerVerdict: null,
+      outcome: "rate-limited",
+    });
     return errorResponse(rateLimit.message, 429, {
       "Retry-After": String(rateLimit.retryAfterSeconds),
       ...cookieHeaders(rateLimit.setCookie),
     });
   }
 
-  let body: ChatRequestBody;
+  const { sessionId } = rateLimit;
+
+  let rawBody: unknown;
   try {
-    body = (await req.json()) as ChatRequestBody;
+    rawBody = await req.json();
   } catch {
+    await logGuardrailEvent({
+      timestamp: new Date().toISOString(),
+      sessionId,
+      persona: null,
+      messageLength: 0,
+      messagePreview: "",
+      dangerVerdict: null,
+      outcome: "error",
+    });
     return errorResponse("Request body must be valid JSON.", 400, cookieHeaders(rateLimit.setCookie));
   }
 
-  const { persona, messages, runningMemory: previousRunningMemory } = body;
+  const validation = validateChatRequest(rawBody);
+  if (!validation.success) {
+    await logGuardrailEvent({
+      timestamp: new Date().toISOString(),
+      sessionId,
+      persona: null,
+      messageLength: 0,
+      messagePreview: "",
+      dangerVerdict: null,
+      outcome: "error",
+    });
+    return errorResponse(validation.error, 400, cookieHeaders(rateLimit.setCookie));
+  }
 
-  if (!isValidPersona(persona)) {
+  const { persona, messages, runningMemory: previousRunningMemory } = validation.data;
+
+  const lastMessage = messages[messages.length - 1];
+  if (lastMessage.role !== "user") {
+    await logGuardrailEvent({
+      timestamp: new Date().toISOString(),
+      sessionId,
+      persona,
+      messageLength: lastMessage.content.length,
+      messagePreview: truncateForLog(lastMessage.content),
+      dangerVerdict: null,
+      outcome: "error",
+    });
     return errorResponse(
-      `Invalid or missing "persona". Must be one of: ${VALID_PERSONAS.join(", ")}.`,
+      "The last message must be a non-empty user message.",
       400,
       cookieHeaders(rateLimit.setCookie)
     );
   }
 
-  if (!Array.isArray(messages) || messages.length === 0) {
-    return errorResponse('"messages" must be a non-empty array.', 400, cookieHeaders(rateLimit.setCookie));
-  }
+  const logBase = {
+    sessionId,
+    persona,
+    messageLength: lastMessage.content.length,
+    messagePreview: truncateForLog(lastMessage.content),
+  };
 
-  const lastMessage = messages[messages.length - 1];
-  if (
-    !lastMessage ||
-    lastMessage.role !== "user" ||
-    typeof lastMessage.content !== "string" ||
-    lastMessage.content.trim().length === 0
-  ) {
+  const safety = await checkInputSafety(lastMessage.content);
+  if (safety.blocked) {
+    await logGuardrailEvent({
+      timestamp: new Date().toISOString(),
+      ...logBase,
+      dangerVerdict: safety.verdict,
+      outcome: "blocked",
+    });
     return errorResponse(
-      "The last message must be a non-empty user message.",
-      400,
+      "This message can't be processed. Please rephrase and try again.",
+      403,
       cookieHeaders(rateLimit.setCookie)
     );
   }
@@ -141,6 +179,13 @@ export async function POST(req: Request) {
       },
     });
 
+    await logGuardrailEvent({
+      timestamp: new Date().toISOString(),
+      ...logBase,
+      dangerVerdict: safety.verdict,
+      outcome: "allowed",
+    });
+
     return new Response(textStream, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
@@ -152,6 +197,13 @@ export async function POST(req: Request) {
       },
     });
   } catch (err) {
+    const outcome: GuardrailOutcome = "error";
+    await logGuardrailEvent({
+      timestamp: new Date().toISOString(),
+      ...logBase,
+      dangerVerdict: safety.verdict,
+      outcome,
+    });
     if (err instanceof AllKeysExhaustedError) {
       return errorResponse(
         "I'm a bit overloaded right now, please try again in a minute.",

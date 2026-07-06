@@ -41,12 +41,13 @@ function getMaxPerDay(): number {
 const requestLog = new Map<string, number[]>();
 
 export type RateLimitResult =
-  | { allowed: true; setCookie: string }
+  | { allowed: true; setCookie: string; sessionId: string }
   | {
       allowed: false;
       message: string;
       retryAfterSeconds: number;
       setCookie: string;
+      sessionId: string;
     };
 
 function getSessionId(req: Request): { sessionId: string; setCookie: string } {
@@ -85,6 +86,7 @@ export function checkRateLimit(req: Request): RateLimitResult {
       message: "You're sending messages too quickly. Please slow down and try again shortly.",
       retryAfterSeconds,
       setCookie,
+      sessionId,
     };
   }
 
@@ -96,11 +98,12 @@ export function checkRateLimit(req: Request): RateLimitResult {
       message: "You've reached today's message limit. Please try again tomorrow.",
       retryAfterSeconds,
       setCookie,
+      sessionId,
     };
   }
 
   timestamps.push(now);
   requestLog.set(key, timestamps);
 
-  return { allowed: true, setCookie };
+  return { allowed: true, setCookie, sessionId };
 }

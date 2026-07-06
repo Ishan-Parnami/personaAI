@@ -44,3 +44,6 @@ yarn-error.log*
 .env.local
 
 tsconfig.tsbuildinfo
+
+# Guardrail request logs (may contain session IDs and message previews)
+logs/
