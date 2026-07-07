@@ -1,5 +1,6 @@
 import { generateText } from "ai";
-import { google } from "@ai-sdk/google";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { withFallback } from "@/lib/gemini/withFallback";
 
 const CHAT_MODEL = "gemini-2.5-flash";
 const VERBATIM_TURN_COUNT = 6; // last N messages (≈3 user+assistant exchanges) kept in full
@@ -58,14 +59,18 @@ async function summarizeOlderTurns(
     ? `Existing running summary so far:\n${previousRunningMemory}\n\n`
     : "";
 
-  const { text } = await generateText({
-    model: google(CHAT_MODEL),
-    prompt:
-      `${priorSummaryBlock}Summarize the following older conversation turns into a short running memory note (a few sentences, factual, no commentary). ` +
-      `Preserve any facts, names, or preferences the user mentioned that would matter for later replies. ` +
-      `Merge it with the existing summary above if one was provided, rather than just appending.\n\n` +
-      `Conversation to summarize:\n${transcript}`,
-  });
+  const prompt =
+    `${priorSummaryBlock}Summarize the following older conversation turns into a short running memory note (a few sentences, factual, no commentary). ` +
+    `Preserve any facts, names, or preferences the user mentioned that would matter for later replies. ` +
+    `Merge it with the existing summary above if one was provided, rather than just appending.\n\n` +
+    `Conversation to summarize:\n${transcript}`;
 
-  return text.trim();
+  return withFallback(async (key) => {
+    const google = createGoogleGenerativeAI({ apiKey: key.value });
+    const { text } = await generateText({
+      model: google(CHAT_MODEL),
+      prompt,
+    });
+    return text.trim();
+  });
 }

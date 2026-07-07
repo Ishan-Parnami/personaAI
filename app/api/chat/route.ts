@@ -211,7 +211,7 @@ export async function POST(req: Request) {
         cookieHeaders(rateLimit.setCookie)
       );
     }
-    const message = err instanceof Error ? err.message : "Unknown error";
-    return errorResponse(`Chat request failed: ${message}`, 500, cookieHeaders(rateLimit.setCookie));
+    console.error("[api/chat] Unhandled error:", err);
+    return errorResponse("Something went wrong. Please try again.", 500, cookieHeaders(rateLimit.setCookie));
   }
 }
